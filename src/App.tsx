@@ -2,11 +2,69 @@ import reactLogo from './assets/react.svg';
 import viteLogo from '/vite.svg';
 import './App.css';
 import Autocomplete from './Autocomplete';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function debounce<F extends (...args: any[]) => any>(
+  func: F,
+  wait: number
+): (...args: Parameters<F>) => void {
+  let timeout: number | null;
+
+  return (...args: Parameters<F>) => {
+    const later = () => {
+      timeout = null;
+      func(...args);
+    };
+
+    if (timeout) {
+      clearTimeout(timeout);
+    }
+
+    timeout = setTimeout(later, wait);
+  };
+}
+
+type Movie = {
+  title: string;
+};
+
+const fetchMovies = async (input: string): Promise<Movie[]> => {
+  const url = `https://api.themoviedb.org/3/search/movie?query=${input}&include_adult=false&language=en-US&page=1`;
+  const requestOptions = {
+    method: 'GET',
+    headers: {
+      accept: 'application/json',
+      Authorization: `Bearer ${import.meta.env.VITE_MOVIE_API_KEY}`,
+    },
+  };
+
+  const response = await fetch(url, requestOptions);
+  const data = await response.json();
+  return data.results;
+};
 
 function App() {
   const [userInput, setUserInput] = useState('');
-  const options = ['Option 1', 'Option 2', 'Option 3', 'Option 4', 'Option 5'];
+  const [options, setOptions] = useState<string[]>([]);
+
+  useEffect(() => {
+    const debouncedFetchMovies = debounce(async (input) => {
+      if (!input) {
+        setOptions([]);
+        return;
+      }
+
+      try {
+        const movies = await fetchMovies(input);
+        setOptions(movies.map((movie) => movie.title));
+      } catch (error) {
+        console.error(error);
+      }
+    }, 400);
+
+    debouncedFetchMovies(userInput);
+  }, [userInput]);
 
   return (
     <>
