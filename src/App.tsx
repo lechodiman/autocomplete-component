@@ -2,7 +2,7 @@ import reactLogo from './assets/react.svg';
 import viteLogo from '/vite.svg';
 import './App.css';
 import Autocomplete from './Autocomplete';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function debounce<F extends (...args: any[]) => any>(
@@ -35,12 +35,15 @@ const fetchMovies = async (input: string): Promise<Movie[]> => {
     method: 'GET',
     headers: {
       accept: 'application/json',
-      Authorization: `Bearer ${import.meta.env.VITE_MOVIE_API_KEY}`,
+      Authorization: `Bearer ${import.meta.env.VITE_APP_MOVIEDB_TOKEN}`,
     },
   };
 
   const response = await fetch(url, requestOptions);
   const data = await response.json();
+
+  console.log(data);
+
   return data.results;
 };
 
@@ -48,23 +51,27 @@ function App() {
   const [userInput, setUserInput] = useState('');
   const [options, setOptions] = useState<string[]>([]);
 
+  const debouncedFetchMovies = useMemo(
+    () =>
+      debounce(async (input) => {
+        if (!input) {
+          setOptions([]);
+          return;
+        }
+
+        try {
+          const movies = await fetchMovies(input);
+          setOptions(movies.map((movie) => movie.title));
+        } catch (error) {
+          console.error(error);
+        }
+      }, 400),
+    []
+  );
+
   useEffect(() => {
-    const debouncedFetchMovies = debounce(async (input) => {
-      if (!input) {
-        setOptions([]);
-        return;
-      }
-
-      try {
-        const movies = await fetchMovies(input);
-        setOptions(movies.map((movie) => movie.title));
-      } catch (error) {
-        console.error(error);
-      }
-    }, 400);
-
     debouncedFetchMovies(userInput);
-  }, [userInput]);
+  }, [debouncedFetchMovies, userInput]);
 
   return (
     <>

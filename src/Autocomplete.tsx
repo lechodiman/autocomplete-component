@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import './Autocomplete.css';
 
 interface IProps {
@@ -11,19 +11,6 @@ const Autocomplete: React.FC<IProps> = ({ options, userInput, onUserInput }) => 
   const [activeOption, setActiveOption] = useState(0);
   const [filteredOptions, setFilteredOptions] = useState<string[]>([]);
   const [showOptions, setShowOptions] = useState(false);
-
-  useEffect(() => {
-    // Mock API call
-    const fetchData = async () => {
-      // Replace this with your actual API call
-      const response = await new Promise((resolve) =>
-        setTimeout(() => resolve(options), 300)
-      );
-      setFilteredOptions(response as string[]);
-    };
-
-    fetchData();
-  }, [options]);
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const userInput = e.currentTarget.value;
