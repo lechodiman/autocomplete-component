@@ -3,20 +3,14 @@ import './Autocomplete.css';
 
 interface IProps {
   options: string[];
-}
-
-interface IState {
-  activeOption: number;
-  filteredOptions: string[];
-  showOptions: boolean;
   userInput: string;
+  onUserInput: (input: string) => void;
 }
 
-const Autocomplete: React.FC<IProps> = ({ options }) => {
+const Autocomplete: React.FC<IProps> = ({ options, userInput, onUserInput }) => {
   const [activeOption, setActiveOption] = useState(0);
   const [filteredOptions, setFilteredOptions] = useState<string[]>([]);
   const [showOptions, setShowOptions] = useState(false);
-  const [userInput, setUserInput] = useState('');
 
   useEffect(() => {
     // Mock API call
@@ -41,21 +35,21 @@ const Autocomplete: React.FC<IProps> = ({ options }) => {
     setActiveOption(0);
     setFilteredOptions(filteredOptions);
     setShowOptions(true);
-    setUserInput(e.currentTarget.value);
+    onUserInput(e.currentTarget.value);
   };
 
   const onClick = (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
     setActiveOption(0);
     setFilteredOptions([]);
     setShowOptions(false);
-    setUserInput(e.currentTarget.innerText);
+    onUserInput(e.currentTarget.innerText);
   };
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.keyCode === 13) {
       setActiveOption(0);
       setShowOptions(false);
-      setUserInput(filteredOptions[activeOption]);
+      onUserInput(filteredOptions[activeOption]);
     } else if (e.keyCode === 38) {
       if (activeOption === 0) {
         return;
