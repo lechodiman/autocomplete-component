@@ -30,6 +30,9 @@ Some of the code best practices I follow are:
 - Following the AHA (Avoid Hasty Abstraction by Kent C Dodds), as opposed to the DRY (Don't Repeat Yourself) principle, which can lead to premature abstraction.
 - Writing comments only when needed. I try to write code that is self-explanatory.
 - Using version control systems like Git. And following a branching strategy like GitFlow.
+- Using linters and formatters like ESLint and Prettier to maintain code consistency.
+- Using design patterns like Composition, Higher-Order Components, Hook composition, Render Props, Compound Components, Prop Collections and Getters, and so on.
+- Testing code with unit tests, integration tests, and end-to-end tests.
 
 4. What are some ways to style components? Can you provide an explanation of each?
 
