@@ -13,7 +13,9 @@ function debounce<F extends (...args: any[]) => any>(
 
   return (...args: Parameters<F>) => {
     const later = () => {
-      timeout = null;
+      if (timeout) {
+        clearTimeout(timeout);
+      }
       func(...args);
     };
 
@@ -83,7 +85,7 @@ function App() {
           <img src={reactLogo} className='logo react' alt='React logo' />
         </a>
       </div>
-      <h1>Vite + React</h1>
+      <h1>Search Movies</h1>
       <div className='card'>
         <Autocomplete
           options={options}
