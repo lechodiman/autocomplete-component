@@ -9,44 +9,43 @@ interface IProps {
 
 const Autocomplete: React.FC<IProps> = ({ options, userInput, onUserInput }) => {
   const [activeOption, setActiveOption] = useState(0);
-  const [filteredOptions, setFilteredOptions] = useState<string[]>([]);
   const [showOptions, setShowOptions] = useState(false);
 
+  const filteredOptions = options.filter(
+    (optionName) => optionName.toLowerCase().indexOf(userInput.toLowerCase()) > -1
+  );
+
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const userInput = e.currentTarget.value;
-
-    const filteredOptions = options.filter(
-      (optionName) => optionName.toLowerCase().indexOf(userInput.toLowerCase()) > -1
-    );
-
     setActiveOption(0);
-    setFilteredOptions(filteredOptions);
     setShowOptions(true);
     onUserInput(e.currentTarget.value);
   };
 
   const onClick = (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
     setActiveOption(0);
-    setFilteredOptions([]);
     setShowOptions(false);
     onUserInput(e.currentTarget.innerText);
   };
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.keyCode === 13) {
-      setActiveOption(0);
-      setShowOptions(false);
-      onUserInput(filteredOptions[activeOption]);
-    } else if (e.keyCode === 38) {
-      if (activeOption === 0) {
-        return;
-      }
-      setActiveOption(activeOption - 1);
-    } else if (e.keyCode === 40) {
-      if (activeOption === filteredOptions.length - 1) {
-        return;
-      }
-      setActiveOption(activeOption + 1);
+    switch (e.key) {
+      case 'Enter':
+        setActiveOption(0);
+        setShowOptions(false);
+        onUserInput(filteredOptions[activeOption]);
+        break;
+      case 'ArrowUp':
+        if (activeOption > 0) {
+          setActiveOption(activeOption - 1);
+        }
+        break;
+      case 'ArrowDown':
+        if (activeOption < filteredOptions.length - 1) {
+          setActiveOption(activeOption + 1);
+        }
+        break;
+      default:
+        break;
     }
   };
 
