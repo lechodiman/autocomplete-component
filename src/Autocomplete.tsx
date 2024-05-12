@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import './Autocomplete.css';
-
+import useOutsideClick from './hooks/useOutsideClick';
 interface IProps {
   options: string[];
   userInput: string;
@@ -14,6 +14,13 @@ const Autocomplete: React.FC<IProps> = ({ options, userInput, onUserInput }) => 
   const filteredOptions = options.filter(
     (optionName) => optionName.toLowerCase().indexOf(userInput.toLowerCase()) > -1
   );
+
+  const containerRef = useRef(null);
+
+  useOutsideClick(containerRef, () => {
+    setShowOptions(false);
+    onUserInput('');
+  });
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setActiveOption(0);
@@ -88,18 +95,16 @@ const Autocomplete: React.FC<IProps> = ({ options, userInput, onUserInput }) => 
   }
 
   return (
-    <>
-      <div className='search'>
-        <input
-          type='text'
-          className='search-box'
-          onChange={onChange}
-          onKeyDown={onKeyDown}
-          value={userInput}
-        />
-        {optionList}
-      </div>
-    </>
+    <div ref={containerRef} className='search'>
+      <input
+        type='text'
+        className='search-box'
+        onChange={onChange}
+        onKeyDown={onKeyDown}
+        value={userInput}
+      />
+      {optionList}
+    </div>
   );
 };
 
