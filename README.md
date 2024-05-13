@@ -1,5 +1,33 @@
 # Coding Challenge
 
+## How to run the project
+
+First, make sure you have Node.js installed on your machine. Then:
+
+1. Install dependencies
+
+```bash
+npm install
+```
+
+2. Set up the environment variables
+
+Create a `.env` file in the root of the project and add the following environment variables:
+
+```bash
+VITE_APP_MOVIEDB_TOKEN=your-token
+```
+
+Replace `your-token` with your own API token from [The Movie Database](https://www.themoviedb.org/documentation/api).
+
+3. Run the project
+
+```bash
+npm run dev
+```
+
+## General Questions
+
 Please answer the following questions with your understanding. We want to know your
 experience.
 
