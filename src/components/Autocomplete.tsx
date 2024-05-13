@@ -91,7 +91,7 @@ const Autocomplete: React.FC<AutocompleteProps> = ({
             const afterMatch = optionName.slice(matchedIndex + userInput.length);
 
             return (
-              <li className={className} key={optionName} onClick={onClick}>
+              <li className={className} key={optionName} onClick={onClick} role='option'>
                 {beforeMatch}
                 <span className='highlight'>{matchedPart}</span>
                 {afterMatch}
@@ -111,6 +111,8 @@ const Autocomplete: React.FC<AutocompleteProps> = ({
         onChange={onChange}
         onKeyDown={onKeyDown}
         value={userInput}
+        role='combobox'
+        aria-autocomplete='list'
       />
       {optionList}
     </div>
