@@ -67,17 +67,17 @@ const Autocomplete: React.FC<AutocompleteProps> = ({
   if (showOptions && userInput) {
     if (!filteredOptions.length) {
       optionList = (
-        <div className='no-options'>
+        <div className='autocomplete__no-options'>
           <em>No Option!</em>
         </div>
       );
     } else {
       optionList = (
-        <ul className='options'>
+        <ul className='autocomplete__options'>
           {filteredOptions.map((optionName, index) => {
-            let className;
+            let className = 'autocomplete__options-item';
             if (index === activeOption) {
-              className = 'option-active';
+              className += ' autocomplete__options-item--active';
             }
 
             const matchedIndex = optionName
@@ -104,10 +104,10 @@ const Autocomplete: React.FC<AutocompleteProps> = ({
   }
 
   return (
-    <div ref={containerRef} className='search'>
+    <div ref={containerRef} className='autocomplete'>
       <input
         type='text'
-        className='search-box'
+        className='autocomplete__input'
         onChange={onChange}
         onKeyDown={onKeyDown}
         value={userInput}
