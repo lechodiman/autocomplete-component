@@ -1,13 +1,18 @@
 import React, { useRef, useState } from 'react';
 import './Autocomplete.css';
-import useOutsideClick from './hooks/useOutsideClick';
-interface IProps {
+import useOutsideClick from '../hooks/useOutsideClick';
+
+export interface AutocompleteProps {
   options: string[];
   userInput: string;
   onUserInput: (input: string) => void;
 }
 
-const Autocomplete: React.FC<IProps> = ({ options, userInput, onUserInput }) => {
+const Autocomplete: React.FC<AutocompleteProps> = ({
+  options,
+  userInput,
+  onUserInput,
+}) => {
   const [activeOption, setActiveOption] = useState(0);
   const [showOptions, setShowOptions] = useState(false);
 
@@ -18,8 +23,10 @@ const Autocomplete: React.FC<IProps> = ({ options, userInput, onUserInput }) => 
   const containerRef = useRef(null);
 
   useOutsideClick(containerRef, () => {
-    setShowOptions(false);
-    onUserInput('');
+    if (showOptions) {
+      onUserInput('');
+      setShowOptions(false);
+    }
   });
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -58,7 +65,13 @@ const Autocomplete: React.FC<IProps> = ({ options, userInput, onUserInput }) => 
 
   let optionList;
   if (showOptions && userInput) {
-    if (filteredOptions.length) {
+    if (!filteredOptions.length) {
+      optionList = (
+        <div className='no-options'>
+          <em>No Option!</em>
+        </div>
+      );
+    } else {
       optionList = (
         <ul className='options'>
           {filteredOptions.map((optionName, index) => {
@@ -66,6 +79,7 @@ const Autocomplete: React.FC<IProps> = ({ options, userInput, onUserInput }) => 
             if (index === activeOption) {
               className = 'option-active';
             }
+
             const matchedIndex = optionName
               .toLowerCase()
               .indexOf(userInput.toLowerCase());
@@ -75,6 +89,7 @@ const Autocomplete: React.FC<IProps> = ({ options, userInput, onUserInput }) => 
             );
             const beforeMatch = optionName.slice(0, matchedIndex);
             const afterMatch = optionName.slice(matchedIndex + userInput.length);
+
             return (
               <li className={className} key={optionName} onClick={onClick}>
                 {beforeMatch}
@@ -84,12 +99,6 @@ const Autocomplete: React.FC<IProps> = ({ options, userInput, onUserInput }) => 
             );
           })}
         </ul>
-      );
-    } else {
-      optionList = (
-        <div className='no-options'>
-          <em>No Option!</em>
-        </div>
       );
     }
   }
