@@ -40,7 +40,6 @@
   background-color: var(--main-bg-color);
   z-index: 999;
   max-height: 200px;
-  overflow-y: auto;
   margin: 0;
   padding: 0;
 }

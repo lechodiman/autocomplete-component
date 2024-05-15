@@ -16,8 +16,16 @@ const Autocomplete: React.FC<AutocompleteProps> = ({
   const [activeOption, setActiveOption] = useState(0);
   const [showOptions, setShowOptions] = useState(false);
 
+  const [currentPage, setCurrentPage] = useState(0);
+  const itemsPerPage = 3;
+
   const filteredOptions = options.filter(
     (optionName) => optionName.toLowerCase().indexOf(userInput.toLowerCase()) > -1
+  );
+
+  const paginatedOptions = filteredOptions.slice(
+    currentPage * itemsPerPage,
+    (currentPage + 1) * itemsPerPage
   );
 
   const containerRef = useRef(null);
@@ -31,12 +39,14 @@ const Autocomplete: React.FC<AutocompleteProps> = ({
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setActiveOption(0);
+    setCurrentPage(0);
     setShowOptions(true);
     onUserInput(e.currentTarget.value);
   };
 
   const onClick = (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
     setActiveOption(0);
+    setCurrentPage(0);
     setShowOptions(false);
     onUserInput(e.currentTarget.innerText);
   };
@@ -45,18 +55,32 @@ const Autocomplete: React.FC<AutocompleteProps> = ({
     switch (e.key) {
       case 'Enter':
         setActiveOption(0);
+        setCurrentPage(0);
         setShowOptions(false);
         onUserInput(filteredOptions[activeOption]);
         break;
       case 'ArrowUp':
-        if (activeOption > 0) {
+        e.preventDefault();
+
+        if (activeOption === 0 && currentPage > 0) {
+          setCurrentPage(currentPage - 1);
+          setActiveOption(itemsPerPage - 1);
+        } else if (activeOption > 0) {
           setActiveOption(activeOption - 1);
         }
+
         break;
       case 'ArrowDown':
-        if (activeOption < filteredOptions.length - 1) {
+        if (
+          activeOption === paginatedOptions.length - 1 &&
+          currentPage < Math.ceil(filteredOptions.length / itemsPerPage) - 1
+        ) {
+          setCurrentPage(currentPage + 1);
+          setActiveOption(0);
+        } else if (activeOption < paginatedOptions.length - 1) {
           setActiveOption(activeOption + 1);
         }
+
         break;
       default:
         break;
@@ -65,7 +89,7 @@ const Autocomplete: React.FC<AutocompleteProps> = ({
 
   let optionList;
   if (showOptions && userInput) {
-    if (!filteredOptions.length) {
+    if (!paginatedOptions.length) {
       optionList = (
         <div className='autocomplete__no-options'>
           <em>No Option!</em>
@@ -74,7 +98,7 @@ const Autocomplete: React.FC<AutocompleteProps> = ({
     } else {
       optionList = (
         <ul className='autocomplete__options'>
-          {filteredOptions.map((optionName, index) => {
+          {paginatedOptions.map((optionName, index) => {
             let className = 'autocomplete__options-item';
             if (index === activeOption) {
               className += ' autocomplete__options-item--active';
